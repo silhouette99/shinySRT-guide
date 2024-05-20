@@ -245,7 +245,7 @@ Deconvolution can also be performed directly through the CreateshinySRT function
 
 
 ShinySRT is suitable for various types of SRT data. Below is a simple demonstration of generating interfaces using other data.
-SingleCellExperiment (SCE) and SpatialExperiment (SPE) are the same S4 type of storage object, SCE is generally the storage object for single cell data, in the example data of spatialLIBD, we found that there is also the SCE object for spatial transcriptomesSPE data, the following is the example code:
+SingleCellExperiment (SCE) and SpatialExperiment (SPE) are the same S4 type of storage object, SCE is generally the storage object for single cell data, in the example data of spatialLIBD, we found that there is also the SCE object for spatial transcriptomes [SPE data](https://www.dropbox.com/s/f4wcvtdq428y73p/Human_DLPFC_Visium_processedData_sce_scran_spatialLIBD.Rdata?dl=1), the following is the example code:
 
 ``` r
 library(spatialLIBD)
@@ -269,7 +269,7 @@ library(shinySRT)
 CreateshinySRT(dat,title = 'single cell experiment',maxlevel = 20)
 ```
 
-Spatial Experiment object is a S4 type of data storage, the following is for the use of SPE data, but it is worth mentioning that SpatialExperiment provides a very small number of sample data spots, the display is not good.The following also includes the use of 10x public data Mouse Brain Serial Section 2 (Sagittal-Anterior), read by SpatialExperiment to generate SPE objects:
+Spatial Experiment object is a S4 type of data storage, the following is for the use of SPE data, but it is worth mentioning that SpatialExperiment provides a very small number of sample data spots, the display is not good.The following also includes the use of 10x public data [Mouse Brain Serial Section 2 (Sagittal-Anterior)](https://www.10xgenomics.com/resources/datasets/mouse-brain-serial-section-2-sagittal-anterior-1-standard), read by SpatialExperiment to generate SPE objects:
 
 ``` r
 ## Spatial Experiment sample data
@@ -294,7 +294,7 @@ setwd('spe')
 CreateshinySRT(dat = spe2,title = 'spatial experiment',gex.assay = 'counts')
 ```
 
-Spatial transcriptome single-cell precision is a development trend, vizgene is a kind of single-cell precision spatial transcriptome platform that has been commercially available, the good point is that the data can be processed by the seurat, the following is the example code, the sample data is the vizgene public platform data vizgene.
+Spatial transcriptome single-cell precision is a development trend, vizgene is a kind of single-cell precision spatial transcriptome platform that has been commercially available, the good point is that the data can be processed by the seurat, the following is the example code, the sample data is the vizgene public platform data [vizgene](https://console.cloud.google.com/storage/browser/public-datasets-vizgen-merfish;tab=objects?prefix=&forceOnObjectsSortingFiltering=false)vizgene.
 
 ``` r
 library(Seurat)
@@ -318,7 +318,7 @@ setwd('shinySRT')
 CreateshinySRT(vizgen.obj,title = 'Seurat vizgene')
 ```
 
-h5ad is a common way of storing data in python, which can be called directly without memory, and scanpy is a very mature spatial transcriptome data processing tool in python. The following is still using 10x Visim public data Mouse Brain Serial Section 2 (Sagittal-Anterior), including the data h5ad transformation and ShinySRT example code:
+h5ad is a common way of storing data in python, which can be called directly without memory, and scanpy is a very mature spatial transcriptome data processing tool in python. The following is still using 10x Visim public data [Mouse Brain Serial Section 2 (Sagittal-Anterior)](https://www.10xgenomics.com/resources/datasets/mouse-brain-serial-section-2-sagittal-anterior-1-standard), including the data h5ad transformation and ShinySRT example code:
 
 ``` python
 import scanpy as sc
@@ -388,7 +388,7 @@ setwd('shinySRT')
 CreateshinySRT(dat = 'Anterior.h5ad',title = 'spatial experiment')
 ```
 
-There are many types of spatial transcriptome data and it is difficult to cover all of them, for this you can construct a list on your own and use it to use shinySRT, the following is the code for the way and format of constructing the list, the data used is the public data from SPATA2 SPATA 313_T
+There are many types of spatial transcriptome data and it is difficult to cover all of them, for this you can construct a list on your own and use it to use shinySRT, the following is the code for the way and format of constructing the list, the data used is the public data from SPATA2 [SPATA 313_T](https://www.dropbox.com/s/iptcb9bqo5oo5xj/313_T.RDS?dl=1)
 
 ``` r
 library(png)
