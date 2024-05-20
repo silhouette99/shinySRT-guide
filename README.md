@@ -150,4 +150,334 @@ new_meta <- blockrand(n=nrow(meta), num.levels = 5, levels = c("1cluster","2clus
 add_meta(new_meta, dirs = "shinyspatial_app", colname = "treatment")
 ```
 
+![](image/content8.png)
+
+![](image/content9.png)
+
+After using “add_meta,” new groups are added to both “meta.Rds” and “meta_group.Rds” respectively.
+
+## scran_norm
+In shinySRT, a method for scran data normalization has been added. The results of this normalization are utilized for visualizing unnormalized data, identifying highly variable genes (HVGs), and performing deconvolution. The scran data normalization method is also employed in Giotto for the normalization of spatial transcriptomics and single-cell data.
+
+mtx <- matrix(sample(5000),nrow = 50,ncol = 100)
+mtx <- scran_norm(mtx)
+
+``` r
+# scran_norm(
+#   mymatrix,
+#   log_offset = 1,
+#   logbase = 2,
+#   scalefactor = 6000,
+#   library_size_norm = TRUE,
+#   log_norm = TRUE
+# )
+```
+
+scran_hvg
+Highly Variable Genes (HVGs) applicable for identifying spatial transcriptomics and single-cell transcriptomics (used for deconvolution).
+
+``` r
+library(SeuratData)
+
+InstallData("stxBrain")
+brain <- LoadData("stxBrain", type = "anterior1")
+
+raw_mtx <- GetAssayData(brain,slot = 'counts')
+mtx <- scran_norm(raw_mtx)
+
+hvg <- scran_hvg(mtx,brain@meta.data,colcluster = 'orig.ident')
+
+# scran_hvg(
+#   mtx,
+#   meta,
+#   colcluster,
+#   method = "scran",
+#   pval = 0.01,
+#   logFC = 0.5,
+#   min_feats = 3
+# )
+```
+
+DWLS deconvolusion
+shinySRT has incorporated the functionality of deconvolution, which utilizes DWLS (Doubly Weighted Least Squares) as employed in Giotto. Users can use the runDWLSDeconv function to obtain the distribution of cellular components for each spot in spatial transcriptomics data by integrating single-cell data.
+
+```
+## The files "brain_sc_expression_matrix.txt.gz" and "brain_sc_metadata.csv" originate from the example data used in Giotto.
+mymatrix = data.table::fread('brain_sc_expression_matrix.txt.gz')
+genes <- mymatrix$V1
+mymatrix <- mymatrix[,-1] %>% as.matrix()
+cells <- colnames(mymatrix)
+mymatrix <- as(mymatrix, 'dgCMatrix')
+rownames(mymatrix) <- genes
+meta <- read.csv('brain_sc_metadata.csv')
+
+mtx <- scran_norm(mymatrix = mymatrix)
+
+## HVG for each cell type
+varg <- scran_hvg(mtx = mtx,
+                  meta = meta,
+                  colcluster = 'Class')
+sign_gene <- varg[, head(.SD, 10), by = "clusters"]
+
+sign_matrix <-
+  DWLSmatrix(
+    matrix = mtx,
+    sign_gene = sign_gene$genes,
+    cell_cols = 'Class',
+    meta = meta
+  )
+
+norm_mtx = GetAssayData(brain, slot = 'data')
+cell_metadata = brain@meta.data
+cluster_column = 'seurat_clusters'
+
+runDWLSDeconv(
+  norm_mtx = norm_mtx,
+  cell_metadata = cell_metadata,
+  cluster_column = 'seurat_clusters',
+  sign_matrix = sign_matrix
+)
+```
+
+Deconvolution can also be performed directly through the CreateshinySRT function in one step. Simply use the parameters scmtx and scmeta to add the expression matrix and metadata of the single-cell data. After running, a new “deconvolution.Rds” file will be added to the shinyspatial_app directory, and the code lines for the sixth module will be added to the code. The results of DWLS can be displayed on the interface.
+
+![](image/content10.png)
+
+
+ShinySRT is suitable for various types of SRT data. Below is a simple demonstration of generating interfaces using other data.
+SingleCellExperiment (SCE) and SpatialExperiment (SPE) are the same S4 type of storage object, SCE is generally the storage object for single cell data, in the example data of spatialLIBD, we found that there is also the SCE object for spatial transcriptomesSPE data, the following is the example code:
+
+``` r
+library(spatialLIBD)
+
+# spe <- fetch_data(type = "spe")
+load(
+  'Human_DLPFC_Visium_processedData_sce_scran_spatialLIBD.Rdata'
+)
+
+## 
+sce2 <- sce[, which(sce$sample_name %in% c(151507, 151508))]
+dat <- sce2
+## Memory reduction
+dat@colData <- dat@colData[,c("sample_name","tissue","imagerow","imagecol","Cluster","position","subject_position")]
+
+dir.create('sce')
+setwd('sce')
+
+library(shinySRT)
+
+CreateshinySRT(dat,title = 'single cell experiment',maxlevel = 20)
+```
+
+Spatial Experiment object is a S4 type of data storage, the following is for the use of SPE data, but it is worth mentioning that SpatialExperiment provides a very small number of sample data spots, the display is not good.The following also includes the use of 10x public data Mouse Brain Serial Section 2 (Sagittal-Anterior), read by SpatialExperiment to generate SPE objects:
+
+``` r
+## Spatial Experiment sample data
+library(SpatialExperiment)
+example(read10xVisium, echo = FALSE)
+
+
+## 10x Visium load in SPE
+spe2 <- SpatialExperiment::read10xVisium(
+  samples = 'anterior/',
+  sample_id = "anterior",
+  type = "sparse",
+  data = "filtered",
+  images = "lowres",
+  load = TRUE
+)
+
+library(shinySRT)
+
+dir.create('spe')
+setwd('spe')
+CreateshinySRT(dat = spe2,title = 'spatial experiment',gex.assay = 'counts')
+```
+
+Spatial transcriptome single-cell precision is a development trend, vizgene is a kind of single-cell precision spatial transcriptome platform that has been commercially available, the good point is that the data can be processed by the seurat, the following is the example code, the sample data is the vizgene public platform data vizgene.
+
+``` r
+library(Seurat)
+options(Seurat.object.assay.version = "v5")
+library(future)
+plan("multisession", workers = 10)
+library(ggplot2)
+library(shinySRT)
+
+vizgen.obj <- LoadVizgen(data.dir = "vizgen/", fov = "vizgene")
+
+vizgen.obj <- SCTransform(vizgen.obj, assay = "Vizgen", clip.range = c(-10, 10))
+vizgen.obj <- RunPCA(vizgen.obj, npcs = 30, features = rownames(vizgen.obj))
+vizgen.obj <- RunUMAP(vizgen.obj, dims = 1:30)
+vizgen.obj <- FindNeighbors(vizgen.obj, reduction = "pca", dims = 1:30)
+vizgen.obj <- FindClusters(vizgen.obj, resolution = 0.3)
+
+dir.create('shinySRT')
+setwd('shinySRT')
+
+CreateshinySRT(vizgen.obj,title = 'Seurat vizgene')
+```
+
+h5ad is a common way of storing data in python, which can be called directly without memory, and scanpy is a very mature spatial transcriptome data processing tool in python. The following is still using 10x Visim public data Mouse Brain Serial Section 2 (Sagittal-Anterior), including the data h5ad transformation and ShinySRT example code:
+
+``` python
+import scanpy as sc
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+sc.logging.print_versions()
+sc.set_figure_params(facecolor="white", figsize=(8, 8))
+sc.settings.verbosity = 3
+import os 
+os.chdir('/mnt/raid62/pzz/shiny_data/other/') 
+results_file = 'Anterior2.h5ad' 
+
+
+adata = sc.read_visium("/mnt/raid62/pzz/shiny_data/seurat/tosce/outs2/posterior/")
+adata.var_names_make_unique()
+adata
+
+
+
+adata.var["mt"] = adata.var_names.str.match("^MT-|^mt-") 
+sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], inplace=True)
+adata.var["RP"] = adata.var_names.str.match("^RPS|^RPL|^Rps|^Rpl") 
+sc.pp.calculate_qc_metrics(adata, qc_vars=["RP"], inplace=True)
+
+# fig, axs = plt.subplots(1, 4, figsize=(16, 4))
+# sns.distplot(adata.obs["total_counts"], kde=False,bins=60, ax=axs[0]) 
+# sns.distplot(adata.obs["n_genes_by_counts"], kde=False, bins=60, ax=axs[1])
+# sns.distplot(adata.obs["pct_counts_mt"], kde=False, bins=60, ax=axs[2])
+# sns.distplot(adata.obs["pct_counts_RP"], kde=False, bins=60, ax=axs[3])
+# plt.savefig("QC_plot.pdf")
+# 
+# fig, axs = plt.subplots(1, 4, figsize=(16, 4))
+# sns.distplot(adata.obs["total_counts"][adata.obs["total_counts"] < 10000], kde=False, bins=40, ax=axs[0]) 
+# sns.distplot(adata.obs["total_counts"][adata.obs["total_counts"] > 40000], kde=False, bins=40, ax=axs[1]) 
+# sns.distplot(adata.obs["n_genes_by_counts"][adata.obs["n_genes_by_counts"] < 4000], kde=False, bins=60, ax=axs[2])
+# sns.distplot(adata.obs["pct_counts_mt"][adata.obs["pct_counts_mt"] >10], kde=False, bins=30, ax=axs[3])
+# plt.savefig("QC_plot1.pdf")
+
+sc.pp.filter_cells(adata, min_counts=5000) #filtered out 80 cells that have less than 5000 counts
+sc.pp.filter_cells(adata, max_counts=50000) #filtered out 39 cells that have more than 50000 counts
+adata = adata[adata.obs["pct_counts_mt"] < 25]
+print(f"#cells after MT filter: {adata.n_obs}") #cells after MT filter: 2502
+sc.pp.filter_genes(adata, min_cells=10)
+
+
+sc.pp.normalize_total(adata, inplace=True)
+sc.pp.log1p(adata)
+sc.pp.highly_variable_genes(adata, flavor="seurat", n_top_genes=2000)
+sc.pp.pca(adata)
+sc.pp.neighbors(adata)
+sc.tl.umap(adata)
+sc.tl.leiden(adata, key_added="clusters")
+sc.pl.umap(adata, color=["total_counts",  "clusters"], wspace=0.4)
+plt.savefig("umap_cluster.pdf")
+sc.pl.spatial(adata, img_key="hires", color=["total_counts", "clusters"])
+plt.savefig("spatial_cluster.pdf")
+
+adata.write(results_file)
+```
+
+``` r
+library(shinySRT)
+dir.create('shinySRT')
+setwd('shinySRT')
+
+CreateshinySRT(dat = 'Anterior.h5ad',title = 'spatial experiment')
+```
+
+There are many types of spatial transcriptome data and it is difficult to cover all of them, for this you can construct a list on your own and use it to use shinySRT, the following is the code for the way and format of constructing the list, the data used is the public data from SPATA2 SPATA 313_T
+
+``` r
+library(png)
+library(SPATA2)
+library(shinySRT)
+
+## eg. SPATA2 obj
+dat <- readRDS('313_T.RDS')
+dat <- SPATA2::updateSpataObject(dat)
+
+## background image
+images <- list(dat@images$`313_T`@image)
+names(images) <- unique(dat@fdata$`313_T`$sample)
+
+## coordination
+coordinates <- list(dat@coordinates$`313_T`[, c("barcodes", "x", "y")])
+names(coordinates) <- unique(dat@fdata$`313_T`$sample)
+
+coordinates <- lapply(names(coordinates), function(x) {
+  cos <- coordinates[[x]]%>%as.data.frame()
+  rownames(cos) <- paste(names(coordinates), cos$barcodes, sep = '_')
+  cos <- cos[,-1]
+  
+  colnames(cos) <- c('y','x')
+  cos <- cos[c(2,1)]
+  ## convert x direction
+  cos$x <- ncol(image[[x]]) - cos$x
+  cos
+})
+
+coordinates <- do.call(rbind,coordinates)
+
+## meta 
+meta <- dat@fdata$`313_T` %>% as.data.frame()
+rownames(meta) <- paste(meta$sample, meta$barcodes, sep = '_')
+meta$slice_sample <- meta$sample
+
+## matrix
+data = dat@data$`313_T`$counts
+colnames(data) <- paste(meta$sample, meta$barcodes, sep = '_')
+
+## names
+obj <- list(image = images,data = data,coordination = coordinates,metadata = meta,reduction = NULL)
+
+dir.create('lists')
+setwd('lists')
+
+CreateshinySRT(obj,title = 'shiny list')
+```
+
+In order to improve efficiency and reduce barriers, shinySRT can also directly read raw data generated by SpaceRanger processing as well as custom datasets (including matrix, position, image, and metadata) , and perform a simple Seurat processing workflow. Finally, it obtains a Seurat object, which users can utilize to create shinySRT.
+
+![](image/content12.png)
+
+``` r
+library(shinySRT)
+
+dir.create('shinyexample')
+setwd('shinyexample')
+
+## matrix: SRT data directory
+## single SRT data
+## rawdata process
+dat <- single_op_dir(dir = 'GBM/',resolution = 1,npcs = 20)
+
+CreateshinySRT(dat)
+```
+
+Sometimes users may need to analyze multiple datasets. shinySRT requires only a few commands. Users just need to place the data into a unified directory and provide the path to the directory. The directory structure is as follows:
+
+![](image/content11.png)
+
+The directory contains four samples (1, 2, 3, 4), and the data types for reading include SpaceRanger (h5), SpaceRanger (mtx), and custom dataset. These four sample directories are collectively placed in the same directory named “multi_raw”. It is important to note that all these samples must be of the same species.
+
+``` r
+library(shinySRT)
+
+## rawdata process
+dat <- shinySRT::multi_dir_spatial('multi_raw/' ,resolution = 1,npcs = 20)
+
+dir.create('multi_sample')
+setwd('multi_sample')
+
+CreateshinySRT(dat)
+```
+
+We have established a related website for shinySRT, where users can upload their SRT data to access an interface tailored to their data for interactive visualization analysis of SRT. The website allows uploading data in three file formats: Binary dataset, SpaceRanger, and custom datasets. The specific files uploaded can be viewed on the webpage. For detailed instructions, users can refer to the "About" page on the website. The basic operations are as follows: Step one, click "Browse" and select the corresponding file (Binary datasets: upload Seurat/SPE objects or Scanpy h5 objects). Step two, wait for the progress bar to complete, and click "Run Analysis" (there are also prompts on the left). Step three, wait for the prompt on the left to change from "Files ready, click 'Run Analysis'" to "Please click 'Go to shiny'". Afterward, click "Go to shiny", and the shinySRT interface will appear below the page.
+
+<div align=center>
+<img src="image/content777.png" width="800" height="500"/>
+</div>
 
