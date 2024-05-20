@@ -60,13 +60,22 @@ Overall, while ShinySRT does not introduce new technologies, it thoughtfully int
  
 ### Reference
 Bergenstråhle, J., Larsson, L., Lundeberg, J., 2020. Seamless integration of image and molecular analysis for spatial transcriptomics workflows. BMC Genomics 21(1), 482. https://doi.org/10.1186/s12864-020-06832-3.
+
 Cao, R., Ling, Y., Meng, J., Jiang, A., Luo, R., He, Q., Li, A., Chen, Y., Zhang, Z., Liu, F., Li, Y., Zhang, G., 2023. SMDB: a Spatial Multimodal Data Browser. Nucleic Acids Research 51(W1), W553-W559. https://doi.org/10.1093/nar/gkad413.
+
 Chaichontat, S., Annie, N., Nicholas, J.E., Leonardo, C.-T., Keri, M., Kristen, R.M., Stephanie, C.H., 2023. Performant web-based interactive visualization tool for spatially-resolved transcriptomics experiments. bioRxiv, 2023.2001.2028.525943. https://doi.org/10.1101/2023.01.28.525943.
+
 Chitrasen, M., Aman, P., Lingxin, C., Lisa, M.A., Bridget, E.S., Beth, D., Christina, K., 2023. SpatialView: An interactive web application for visualization of multiple samples in spatial transcriptomics experiments. bioRxiv, 2023.2006.2013.544836. https://doi.org/10.1101/2023.06.13.544836.
+
 Duy, P., Brad, B., Quan, H.N., 2023. i-stLearn: An interactive platform for spatial transcriptomics analysis. bioRxiv, 2023.2003.2027.534291. https://doi.org/10.1101/2023.03.27.534291.
+
 Jan, K., Jasmin von, E., Vidhya, M.R., Paulina, W., Kevin, J., Juergen, B., Ulrich, G.H., Daniel, D., Oliver, S., Dieter Henrik, H., 2020. Inferring spatially transient gene expression pattern from spatial transcriptomic studies. bioRxiv, 2020.2010.2020.346544. https://doi.org/10.1101/2020.10.20.346544.
+
 Kejie, L., Zhengyu, O., Yirui, C., Jacob, G., Dongdong, L., Michael, M., Will, C., David, S., Baohong, Z., 2022. Cellxgene VIP unleashes full power of interactive visualization and integrative analysis of scRNA-seq, spatial transcriptomics, and multiome data. bioRxiv, 2020.2008.2028.270652. https://doi.org/10.1101/2020.08.28.270652.
+
 Pardo, B., Spangler, A., Weber, L.M., Page, S.C., Hicks, S.C., Jaffe, A.E., Martinowich, K., Maynard, K.R., Collado-Torres, L., 2022. spatialLIBD: an R/Bioconductor package to visualize spatially-resolved transcriptomics data. BMC Genomics 23(1), 434. https://doi.org/10.1186/s12864-022-08601-w.
+
 Pielawski, N., Andersson, A., Avenel, C., Behanova, A., Chelebian, E., Klemm, A., Nysjö, F., Solorzano, L., Wählby, C., 2023. TissUUmaps 3: Improvements in interactive visualization, exploration, and quality assessment of large-scale spatial omics data. Heliyon 9(5). https://doi.org/10.1016/j.heliyon.2023.e15306.
+
 Quintana, J.F., Chandrasegaran, P., Sinton, M.C., Briggs, E.M., Otto, T.D., Heslop, R., Bentley-Abbot, C., Loney, C., de Lecea, L., Mabbott, N.A., MacLeod, A., 2022. Single cell and spatial transcriptomic analyses reveal microglia-plasma cell crosstalk in the brain during Trypanosoma brucei infection. Nature Communications 13(1), 5752. https://doi.org/10.1038/s41467-022-33542-z.
 
