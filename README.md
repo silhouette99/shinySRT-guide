@@ -483,6 +483,6 @@ CreateshinySRT(dat)
 We have established a related website for shinySRT, where users can upload their SRT data to access an interface tailored to their data for interactive visualization analysis of SRT. The website allows uploading data in three file formats: Binary dataset, SpaceRanger, and custom datasets. The specific files uploaded can be viewed on the webpage. For detailed instructions, users can refer to the "About" page on the website. The basic operations are as follows: Step one, click "Browse" and select the corresponding file (Binary datasets: upload Seurat/SPE objects or Scanpy h5 objects). Step two, wait for the progress bar to complete, and click "Run Analysis" (there are also prompts on the left). Step three, wait for the prompt on the left to change from "Files ready, click 'Run Analysis'" to "Please click 'Go to shiny'". Afterward, click "Go to shiny", and the shinySRT interface will appear below the page.
 
 <div align=center>
-<img src="netface.png" width="1200" height="850"/>
+<img src="netface.png" width="1200" height="800"/>
 </div>
 
