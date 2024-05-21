@@ -246,7 +246,7 @@ runDWLSDeconv(
 
 Deconvolution can also be performed directly through the CreateshinySRT function in one step. Simply use the parameters scmtx and scmeta to add the expression matrix and metadata of the single-cell data. After running, a new “deconvolution.Rds” file will be added to the shinyspatial_app directory, and the code lines for the sixth module will be added to the code. The results of DWLS can be displayed on the interface.
 
-![](https://github.com/silhouette99/shinySRT/blob/master/image/content10.png)
+![](content10.png)
 
 
 ShinySRT is suitable for various types of SRT data. Below is a simple demonstration of generating interfaces using other data.
