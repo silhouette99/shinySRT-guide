@@ -73,7 +73,9 @@ pacman::p_load(
 
 ## Quick Start Guide
 In summary, the shinySRT software package imports SRT objects and exports the required data, including expression matrices, metadata, spatial coordinates, etc., in a more compact standard format. shinySRT generates code based on the samples, all of which are necessary for the shiny app.
+
 In the following example, we use publicly available SRT data provided by the 10x Genomics website, which is also utilized in the Seurat spatial transcriptomics data analysis tutorial.
+
 A shiny app for spatial transcriptomics can be quickly generated following these steps:
 
 ``` r
