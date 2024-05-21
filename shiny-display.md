@@ -2,7 +2,7 @@
 ### S1.1 SRT Visualization Tools Selected for Comparative Analysis.
 Our tool is developed to visualize SRT data and facilitate interactive analysis and data sharing for researchers without a bioinformatics background. Below is a comparative list between shinySRT and existing SRT data visualization tools, we present a compilation of 9 SRT sequencing data visualization and analysis tools: SMDB(Cao et al., 2023), spatialLIBD (Pardo et al., 2022), Cellxgene VIP (Kejie et al., 2022), Samui (Chaichontat et al., 2023), SpatialView (Chitrasen et al., 2023), STutility (Bergenstråhle et al., 2020), Loupe Browser, SPATA2 (Jan et al., 2020), TissUUmaps3 (Pielawski et al., 2023), and i-stLearn (Duy et al., 2023). Some tools possess the capability to execute complete data workflow and SRT sequence data visualization, including STutility, TissUUmaps3, and i-stLearn. 
 
-![](compare.png) 
+
 Table 1: Comparison of several SRT spatial resolved visualization tools in terms of key functionalities (yellow rows), display / UI options (blue rows), supported input file formats (green rows). Further detailed explanations will follow.
 
 ShinySRT and other similar tools are compared in the following three aspects: (1) key functionalities, (2) supported input file formats, and (3) display methods/UI options (Table 1). 
